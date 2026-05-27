@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokemon Guessing Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ── START SCREEN ─────────────────────────────────── -->
+  <div id="screen-start" class="screen screen-start">
+    <div class="start-sprites" aria-hidden="true">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"  alt="" />
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png"   alt="" />
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/150.png" alt="" />
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png" alt="" />
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png"  alt="" />
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/131.png" alt="" />
+    </div>
+    <h1 class="game-title">POKEMON<br/>GUESS</h1>
+    <button id="btn-find-battle" class="btn-primary">FIND BATTLE</button>
+  </div>
+
+  <!-- ── MATCHMAKING SCREEN ───────────────────────────── -->
+  <div id="screen-matchmaking" class="screen screen-matchmaking" style="display:none">
+    <div class="spinner"></div>
+    <p class="matchmaking-label">SEARCHING FOR OPPONENT...</p>
+    <p class="matchmaking-timer">
+      <span id="matchmaking-seconds">0</span>s
+    </p>
+    <button id="btn-cancel-matchmaking" class="btn-secondary">CANCEL</button>
+  </div>
+
+  <!-- ── TIMEOUT SCREEN ───────────────────────────────── -->
+  <div id="screen-timeout" class="screen" style="display:none">
+    <p class="timeout-message">NO OPPONENT FOUND</p>
+    <button id="btn-try-again" class="btn-primary">TRY AGAIN</button>
+    <button id="btn-timeout-home" class="btn-secondary">FRONT PAGE</button>
+  </div>
+
+  <!-- ── BATTLE SCREEN ────────────────────────────────── -->
+  <div id="screen-battle" class="screen screen-battle" style="display:none">
+
+    <div class="battle-header">
+      <div class="timer-block">
+        <span id="turn-label" class="turn-label">YOUR TURN</span>
+        <span id="timer-value" class="timer-value">30</span>
+      </div>
+    </div>
+
+    <div class="battle-input-area">
+      <input
+        id="guess-input"
+        type="text"
+        class="guess-input"
+        placeholder="POKEMON NAME..."
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+      />
+      <button id="guess-submit" class="btn-primary btn-guess">OK</button>
+    </div>
+
+    <p id="typing-indicator" class="typing-indicator" style="display:none">
+      Opponent is typing...
+    </p>
+
+    <ul id="guess-list" class="guess-list"></ul>
+  </div>
+
+  <!-- ── RESULT SCREEN ────────────────────────────────── -->
+  <div id="screen-result" class="screen screen-result" style="display:none">
+    <h2 id="result-headline" class="result-headline">YOU WIN!</h2>
+    <p class="result-subheading">POKEMON CAUGHT THIS BATTLE:</p>
+    <ul id="result-guess-list" class="guess-list result-guess-list"></ul>
+    <button id="btn-front-page" class="btn-primary">FRONT PAGE</button>
+  </div>
+
+  <!-- ── RECONNECT OVERLAY ─────────────────────────────── -->
+  <div id="reconnect-overlay" class="reconnect-overlay" style="display:none">
+    <div class="spinner"></div>
+    <p>RECONNECTING...</p>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
