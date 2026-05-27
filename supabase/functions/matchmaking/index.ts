@@ -36,9 +36,17 @@ async function findOrCreateBattle(supabase: any, playerId: string) {
 }
 
 async function insertIntoQueue(supabase: any, playerId: string) {
+  // Ryd gamle entries op for denne spiller, indsæt frisk
   await supabase
     .from("matchmaking_queue")
-    .upsert({ player_id: playerId, status: "waiting" }, { onConflict: "player_id" });
+    .delete()
+    .eq("player_id", playerId);
+
+  const { error } = await supabase
+    .from("matchmaking_queue")
+    .insert({ player_id: playerId, status: "waiting" });
+
+  if (error) throw new Error(`Queue insert failed: ${error.message}`);
 }
 
 async function matchWaitingPlayers(supabase: any, playerId: string) {
