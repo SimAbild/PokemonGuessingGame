@@ -51,7 +51,7 @@ async function handleBattleEvent(payload, battleId, playerId) {
     await syncBattleState(battleId, playerId);
   }
   if (payload.table === "guesses") {
-    await refreshGuessDisplay(battleId);
+    await refreshGuessDisplay(currentBattle.id, playerId);
   }
 }
 
@@ -152,9 +152,14 @@ async function fetchAllPokemon() {
   return data ?? [];
 }
 
-async function refreshGuessDisplay(battleId) {
+async function refreshGuessDisplay(battleId, playerId) {
   const guesses = await fetchBattleGuesses(battleId);
-  renderBattleGuessList(guesses);
+
+  const myGuesses = guesses.filter(
+    (g) => g.player_id === playerId
+  );
+
+  renderBattleGuessList(myGuesses);
   updateGuessCounter(guesses.length);
 }
 
