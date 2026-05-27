@@ -1,0 +1,9 @@
+# Supabase MCP config (indeholder access token)
+.mcp.json
+
+# IDE
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -32,14 +32,10 @@ CREATE POLICY "queue_update_service"
 -- =====================
 ALTER TABLE battles ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "battles_select_participant"
+-- Ingen login i dette spil — alle kan læse battles via anon key
+CREATE POLICY "battles_select_all"
   ON battles FOR SELECT
-  USING (
-    player1_id = (current_setting('request.jwt.claims', true)::json->>'sub')::uuid
-    OR
-    player2_id = (current_setting('request.jwt.claims', true)::json->>'sub')::uuid
-    OR current_setting('request.jwt.claims', true)::json->>'role' = 'service_role'
-  );
+  USING (true);
 
 CREATE POLICY "battles_insert_service"
   ON battles FOR INSERT

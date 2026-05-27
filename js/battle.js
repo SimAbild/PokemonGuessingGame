@@ -30,8 +30,9 @@ async function fetchFullBattle(battleId) {
     .from("battles")
     .select("*")
     .eq("id", battleId)
-    .single();
+    .maybeSingle();
   if (error) throw new Error(`Could not load battle: ${error.message}`);
+  if (!data) throw new Error(`Battle not found: ${battleId}`);
   return data;
 }
 
