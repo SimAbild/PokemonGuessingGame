@@ -4,7 +4,7 @@ import { startPresence, stopPresence } from "./presence.js";
 import {
   showBattleScreen,
   showResultScreen,
-  renderGuess,
+  renderBattleGuessList,
   flashGuessInput,
   showReconnectingOverlay,
   hideReconnectingOverlay,
@@ -20,6 +20,7 @@ export async function initBattle(battleData) {
   showBattleScreen(isMyTurn(playerId, currentBattle));
   setTurnIndicator(isMyTurn(playerId, currentBattle));
   startTurnTimer(currentBattle.turn_started_at, () => submitTimeout(currentBattle.id, playerId));
+  await refreshGuessDisplay(currentBattle.id);
 
   subscribeToBattleUpdates(currentBattle.id, playerId);
   startPresence(currentBattle.id, playerId, () => handleOpponentDisconnect(currentBattle.id, playerId));
@@ -47,6 +48,9 @@ function subscribeToBattleUpdates(battleId, playerId) {
 async function handleBattleEvent(payload, battleId, playerId) {
   if (payload.table === "battles") {
     await syncBattleState(battleId, playerId);
+  }
+  if (payload.table === "guesses") {
+    await refreshGuessDisplay(battleId);
   }
 }
 
@@ -88,17 +92,17 @@ export async function submitPokemonGuess(pokemonName) {
     });
 
     if (error) throw new Error(error.message);
-    processGuessResult(data, playerId);
+    processGuessResult(data);
   } catch (error) {
     console.error("Guess submission failed:", error.message);
     flashGuessInput("wrong");
   }
 }
 
-function processGuessResult(result, playerId) {
+function processGuessResult(result) {
   if (result.result === "correct") {
     flashGuessInput("correct");
-    renderGuess(result.pokemon, playerId);
+    // Realtime opdaterer guess-listen for begge spillere
   } else {
     flashGuessInput("wrong");
   }
@@ -132,6 +136,11 @@ async function endBattle(battle, playerId) {
 
   const guesses = await fetchBattleGuesses(battle.id);
   showResultScreen(battle, playerId, guesses);
+}
+
+async function refreshGuessDisplay(battleId) {
+  const guesses = await fetchBattleGuesses(battleId);
+  renderBattleGuessList(guesses);
 }
 
 async function fetchBattleGuesses(battleId) {

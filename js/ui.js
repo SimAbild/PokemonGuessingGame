@@ -71,10 +71,14 @@ export function flashGuessInput(outcome) {
   }, 600);
 }
 
-export function renderGuess(pokemon, playerId) {
+export function renderBattleGuessList(guesses) {
   const listEl = getElement("guess-list");
-  const item = buildGuessListItem(pokemon);
-  listEl.prepend(item);
+  listEl.innerHTML = "";
+  guesses.forEach((guess) => {
+    if (guess.pokemon) {
+      listEl.appendChild(buildGuessListItem(guess.pokemon));
+    }
+  });
 }
 
 function buildGuessListItem(pokemon) {
