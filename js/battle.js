@@ -5,6 +5,7 @@ import {
   showBattleScreen,
   showResultScreen,
   renderBattleGuessList,
+  updateGuessCounter,
   flashGuessInput,
   showReconnectingOverlay,
   hideReconnectingOverlay,
@@ -133,14 +134,28 @@ async function endBattle(battle, playerId) {
   stopTimer();
   stopPresence();
   unsubscribeActiveChannel();
+  hideReconnectingOverlay();
 
-  const guesses = await fetchBattleGuesses(battle.id);
-  showResultScreen(battle, playerId, guesses);
+  const [guesses, allPokemon] = await Promise.all([
+    fetchBattleGuesses(battle.id),
+    fetchAllPokemon(),
+  ]);
+
+  showResultScreen(battle, playerId, guesses, allPokemon);
+}
+
+async function fetchAllPokemon() {
+  const { data } = await supabase
+    .from("pokemon")
+    .select("id, name")
+    .order("id", { ascending: true });
+  return data ?? [];
 }
 
 async function refreshGuessDisplay(battleId) {
   const guesses = await fetchBattleGuesses(battleId);
   renderBattleGuessList(guesses);
+  updateGuessCounter(guesses.length);
 }
 
 async function fetchBattleGuesses(battleId) {

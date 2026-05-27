@@ -62,6 +62,7 @@
         spellcheck="false"
       />
       <button id="guess-submit" class="btn-primary btn-guess">OK</button>
+      <span id="guess-counter" class="guess-counter">0/151</span>
     </div>
 
     <p id="typing-indicator" class="typing-indicator" style="display:none">
@@ -74,8 +75,8 @@
   <!-- ── RESULT SCREEN ────────────────────────────────── -->
   <div id="screen-result" class="screen screen-result" style="display:none">
     <h2 id="result-headline" class="result-headline">YOU WIN!</h2>
-    <p class="result-subheading">POKEMON CAUGHT THIS BATTLE:</p>
-    <ul id="result-guess-list" class="guess-list result-guess-list"></ul>
+    <p id="result-summary" class="result-summary"></p>
+    <div id="result-pokedex" class="result-pokedex"></div>
     <button id="btn-front-page" class="btn-primary">FRONT PAGE</button>
   </div>
 

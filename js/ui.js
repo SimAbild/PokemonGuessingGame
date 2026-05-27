@@ -17,7 +17,7 @@ export function showBattleScreen(isMyTurn) {
   setTurnIndicator(isMyTurn);
 }
 
-export function showResultScreen(battle, playerId, guesses) {
+export function showResultScreen(battle, playerId, guesses, allPokemon) {
   setScreenVisible("screen-result");
 
   const didWin = battle.winner === playerId;
@@ -30,7 +30,9 @@ export function showResultScreen(battle, playerId, guesses) {
     ? "result-disconnect"
     : didWin ? "result-win" : "result-lose";
 
-  renderAllGuesses(guesses);
+  getElement("result-summary").textContent = `${guesses.length}/151 POKEMON GUESSED`;
+
+  renderResultPokedexTable(allPokemon, guesses);
 }
 
 // ── Matchmaking UI ───────────────────────────────────────────────────────────
@@ -92,13 +94,46 @@ function buildGuessListItem(pokemon) {
   return li;
 }
 
-function renderAllGuesses(guesses) {
-  const listEl = getElement("result-guess-list");
-  listEl.innerHTML = "";
-  guesses.forEach((guess) => {
-    const li = buildGuessListItem(guess.pokemon);
-    listEl.appendChild(li);
+function renderResultPokedexTable(allPokemon, guesses) {
+  const guessedIds = new Set(guesses.map((g) => g.pokemon_id));
+  const container = getElement("result-pokedex");
+  container.innerHTML = "";
+
+  const columns = 4;
+  const perColumn = Math.ceil(allPokemon.length / columns);
+
+  for (let col = 0; col < columns; col++) {
+    const slice = allPokemon.slice(col * perColumn, (col + 1) * perColumn);
+    const table = buildPokedexColumn(slice, guessedIds);
+    container.appendChild(table);
+  }
+}
+
+function buildPokedexColumn(pokemonSlice, guessedIds) {
+  const table = document.createElement("table");
+  table.className = "result-table";
+
+  const thead = document.createElement("thead");
+  thead.innerHTML = "<tr><th>Dex</th><th>Pokémon</th></tr>";
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  pokemonSlice.forEach((pokemon) => {
+    const tr = document.createElement("tr");
+    const wasGuessed = guessedIds.has(pokemon.id);
+    tr.className = wasGuessed ? "result-row-guessed" : "result-row-empty";
+    tr.innerHTML = `
+      <td>${String(pokemon.id).padStart(3, "0")}</td>
+      <td>${wasGuessed ? pokemon.name : ""}</td>
+    `;
+    tbody.appendChild(tr);
   });
+  table.appendChild(tbody);
+  return table;
+}
+
+export function updateGuessCounter(count) {
+  getElement("guess-counter").textContent = `${count}/151`;
 }
 
 function clearGuessList() {

@@ -22,8 +22,10 @@ export function getOrCreatePlayerId() {
 // ── Realtime channel med auto-reconnect ─────────────────────────────────────
 
 let activeChannel = null;
+let battleEnded = false;
 
 export function subscribeToChannel(channelName, onEvent, onReconnect) {
+  battleEnded = false;
   if (activeChannel) {
     supabase.removeChannel(activeChannel);
   }
@@ -36,7 +38,7 @@ export function subscribeToChannel(channelName, onEvent, onReconnect) {
       if (status === "SUBSCRIBED") {
         onReconnect?.("connected");
       }
-      if (status === "CLOSED" || status === "CHANNEL_ERROR") {
+      if ((status === "CLOSED" || status === "CHANNEL_ERROR") && !battleEnded) {
         onReconnect?.("reconnecting");
         scheduleReconnect(channelName, onEvent, onReconnect);
       }
@@ -47,11 +49,14 @@ export function subscribeToChannel(channelName, onEvent, onReconnect) {
 
 function scheduleReconnect(channelName, onEvent, onReconnect) {
   setTimeout(() => {
-    subscribeToChannel(channelName, onEvent, onReconnect);
+    if (!battleEnded) {
+      subscribeToChannel(channelName, onEvent, onReconnect);
+    }
   }, 2000);
 }
 
 export function unsubscribeActiveChannel() {
+  battleEnded = true;
   if (activeChannel) {
     supabase.removeChannel(activeChannel);
     activeChannel = null;
